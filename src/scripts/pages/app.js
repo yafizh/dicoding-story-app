@@ -1,6 +1,14 @@
 import routes from '../routes/routes';
 import { getActiveRoute, getActivePathname } from '../routes/url-parser';
 import { isAuthenticated, getAuthUser, clearAuthSession } from '../utils/auth';
+import {
+  isPushSupported,
+  isNotificationDenied,
+  isCurrentPushSubscriptionAvailable,
+  subscribePush,
+  unsubscribePush,
+} from '../utils/notification-helper';
+import { showToast } from '../utils/toast';
 
 class App {
   #content = null;
@@ -79,13 +87,35 @@ class App {
       navList.innerHTML = `
         <li><a href="#/">Beranda</a></li>
         <li><a href="#/about">About</a></li>
+        ${isPushSupported()
+          ? `<li>
+              <button
+                type="button"
+                id="push-toggle-button"
+                class="nav-push-btn"
+                aria-pressed="false"
+                aria-label="Aktifkan langganan push notification"
+              >
+                <span class="push-toggle-indicator" aria-hidden="true"></span>
+                <span id="push-toggle-text">Notifikasi</span>
+              </button>
+            </li>`
+          : ''}
         <li><span class="user-greeting">${user?.name || 'User'}</span></li>
         <li><button type="button" id="logout-button" class="nav-logout-btn" aria-label="Keluar dari akun">Keluar</button></li>
       `;
 
+      this.#setupPushToggle();
+
       const logoutButton = navList.querySelector('#logout-button');
       if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
+        logoutButton.addEventListener('click', async () => {
+          try {
+            await unsubscribePush();
+          } catch (error) {
+            console.warn('Gagal melepas langganan push saat keluar:', error);
+          }
+
           clearAuthSession();
           location.hash = '#/login';
         });
@@ -98,6 +128,62 @@ class App {
         <li><a href="#/login">Masuk</a></li>
       `;
     }
+  }
+
+  async #setupPushToggle() {
+    const button = document.querySelector('#push-toggle-button');
+    if (!button) return;
+
+    await this.#renderPushToggleState(button);
+
+    button.addEventListener('click', async () => {
+      const isSubscribed = button.getAttribute('aria-pressed') === 'true';
+
+      this.#setPushToggleBusy(button, true);
+
+      const result = isSubscribed ? await unsubscribePush() : await subscribePush();
+
+      showToast(result.message, result.ok ? 'success' : 'error');
+
+      this.#setPushToggleBusy(button, false);
+      await this.#renderPushToggleState(button);
+    });
+  }
+
+  #setPushToggleBusy(button, isBusy) {
+    const label = button.querySelector('#push-toggle-text');
+    button.disabled = isBusy;
+    button.classList.toggle('is-busy', isBusy);
+    if (isBusy && label) {
+      label.textContent = 'Memproses...';
+    }
+  }
+
+  async #renderPushToggleState(button) {
+    const label = button.querySelector('#push-toggle-text');
+    const isSubscribed = await isCurrentPushSubscriptionAvailable();
+
+    button.setAttribute('aria-pressed', isSubscribed ? 'true' : 'false');
+    button.classList.toggle('is-subscribed', isSubscribed);
+
+    if (label) {
+      label.textContent = isSubscribed ? 'Notifikasi Aktif' : 'Aktifkan Notifikasi';
+    }
+
+    if (isNotificationDenied() && !isSubscribed) {
+      button.title = 'Izin notifikasi diblokir. Ubah pengaturan situs pada browser Anda.';
+    } else {
+      button.title = isSubscribed
+        ? 'Klik untuk berhenti berlangganan push notification'
+        : 'Klik untuk berlangganan push notification';
+    }
+
+    button.setAttribute(
+      'aria-label',
+      isSubscribed
+        ? 'Nonaktifkan langganan push notification'
+        : 'Aktifkan langganan push notification'
+    );
   }
 
   #updateActiveNavLink() {

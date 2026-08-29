@@ -3,8 +3,11 @@ import 'leaflet/dist/leaflet.css';
 import '../styles/styles.css';
 
 import App from './pages/app';
+import { registerServiceWorker } from './utils/sw-register';
 
 document.addEventListener('DOMContentLoaded', async () => {
+  await registerServiceWorker();
+
   const app = new App({
     content: document.querySelector('#main-content'),
     drawerButton: document.querySelector('#drawer-button'),
@@ -15,4 +18,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('hashchange', async () => {
     await app.renderPage();
   });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data?.type === 'NAVIGATE' && event.data.url) {
+        const targetHash = new URL(event.data.url, location.origin).hash || '#/';
+        location.hash = targetHash;
+      }
+    });
+  }
 });

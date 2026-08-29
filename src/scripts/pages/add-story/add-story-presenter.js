@@ -1,4 +1,5 @@
 import { getAuthToken } from '../../utils/auth';
+import { sendStoryContextToServiceWorker } from '../../utils/notification-helper';
 
 export default class AddStoryPresenter {
   #view;
@@ -261,6 +262,8 @@ export default class AddStoryPresenter {
 
       const response = await this.#model.addStory(payload, token);
 
+      await this.#syncLatestStoryContext(token);
+
       this.#view.showAlert(
         response.message || 'Cerita Anda berhasil diterbitkan! Mengalihkan ke beranda...',
         'success'
@@ -283,6 +286,19 @@ export default class AddStoryPresenter {
       );
     } finally {
       this.#view.setLoading(false);
+    }
+  }
+
+  async #syncLatestStoryContext(token) {
+    try {
+      const stories = await this.#model.getAllStories(token, { location: 0, size: 1 });
+      const latestStory = Array.isArray(stories) ? stories[0] : null;
+
+      if (latestStory) {
+        await sendStoryContextToServiceWorker(latestStory);
+      }
+    } catch (error) {
+      console.warn('Gagal menyinkronkan konteks cerita untuk notifikasi:', error);
     }
   }
 

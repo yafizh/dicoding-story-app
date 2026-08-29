@@ -360,6 +360,7 @@ export default class HomeView {
             ${formattedDate ? `<time class="map-popup-date" datetime="${story.createdAt}">${formattedDate}</time>` : ''}
             <span class="map-popup-coords">Lat: ${story.lat.toFixed(4)}, Lon: ${story.lon.toFixed(4)}</span>
             <p class="map-popup-desc">${truncatedDesc}</p>
+            <a href="#/stories/${story.id}" class="map-popup-detail-link" aria-label="Lihat detail cerita oleh ${story.name}">Lihat Detail</a>
           </div>
         </article>
       `;
@@ -487,6 +488,10 @@ export default class HomeView {
 
           <p class="story-description">${story.description || 'Tidak ada deskripsi.'}</p>
 
+          <a href="#/stories/${story.id}" class="btn-detail-link" aria-label="Lihat detail cerita oleh ${story.name}">
+            Lihat Detail Cerita
+          </a>
+
           <div class="story-footer">
             ${hasLocation
         ? `
@@ -559,6 +564,8 @@ export default class HomeView {
     if (!listEl) return;
 
     listEl.addEventListener('click', (event) => {
+      if (event.target.closest('.btn-detail-link')) return;
+
       const locateBtn = event.target.closest('.btn-locate-map');
       const card = event.target.closest('.story-card');
 
@@ -578,6 +585,8 @@ export default class HomeView {
     // Keyboard navigation (Enter / Space on story card)
     listEl.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
+        if (event.target.closest('.btn-detail-link')) return;
+
         const card = event.target.closest('.story-card');
         if (card) {
           event.preventDefault();

@@ -6,6 +6,7 @@ const ENDPOINTS = {
   STORIES: `${CONFIG.BASE_URL}/stories`,
   STORIES_GUEST: `${CONFIG.BASE_URL}/stories/guest`,
   STORY_DETAIL: (id) => `${CONFIG.BASE_URL}/stories/${id}`,
+  SUBSCRIBE: `${CONFIG.BASE_URL}/notifications/subscribe`,
 };
 
 export async function register({ name, email, password }) {
@@ -144,6 +145,54 @@ export async function addStory({ description, photo, lat, lon }, token = null) {
     return responseJson;
   } catch (error) {
     console.error('API Error in addStory:', error);
+    throw error;
+  }
+}
+
+export async function subscribePushNotification({ endpoint, keys: { p256dh, auth } }, token) {
+  try {
+    const response = await fetch(ENDPOINTS.SUBSCRIBE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ endpoint, keys: { p256dh, auth } }),
+    });
+
+    const responseJson = await response.json();
+
+    if (!response.ok) {
+      throw new Error(responseJson.message || 'Gagal berlangganan push notification');
+    }
+
+    return responseJson;
+  } catch (error) {
+    console.error('API Error in subscribePushNotification:', error);
+    throw error;
+  }
+}
+
+export async function unsubscribePushNotification({ endpoint }, token) {
+  try {
+    const response = await fetch(ENDPOINTS.SUBSCRIBE, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ endpoint }),
+    });
+
+    const responseJson = await response.json();
+
+    if (!response.ok) {
+      throw new Error(responseJson.message || 'Gagal berhenti berlangganan push notification');
+    }
+
+    return responseJson;
+  } catch (error) {
+    console.error('API Error in unsubscribePushNotification:', error);
     throw error;
   }
 }

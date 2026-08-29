@@ -58,7 +58,7 @@ export default class HomePresenter {
       const isAuth = isAuthenticated();
       if (!isAuth) {
         this.#view.showError(
-          'Gagal memuat cerita. Anda perlu login terlebih dahulu untuk mengakses data cerita Dicoding.'
+          'Gagal memuat cerita. Anda perlu login terlebih dahulu untuk mengakses data cerita.'
         );
       } else {
         this.#view.showError(error.message || 'Gagal memuat daftar cerita. Silakan coba lagi nanti.');
