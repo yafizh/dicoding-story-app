@@ -47,7 +47,7 @@ class App {
       navList.innerHTML = `
         <li><a href="#/">Beranda</a></li>
         <li><a href="#/about">About</a></li>
-        <li><span class="user-greeting">👋 ${user?.name || 'User'}</span></li>
+        <li><span class="user-greeting">${user?.name || 'User'}</span></li>
         <li><button type="button" id="logout-button" class="nav-logout-btn">Keluar</button></li>
       `;
 

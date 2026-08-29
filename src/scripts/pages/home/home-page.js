@@ -1,13 +1,24 @@
+import * as api from '../../data/api';
+import HomeView from './home-view';
+import HomePresenter from './home-presenter';
+
 export default class HomePage {
+  #view;
+  #presenter;
+
+  constructor() {
+    this.#view = new HomeView();
+    this.#presenter = new HomePresenter({
+      view: this.#view,
+      model: api,
+    });
+  }
+
   async render() {
-    return `
-      <section class="container">
-        <h1>Home Page</h1>
-      </section>
-    `;
+    return this.#view.getTemplate();
   }
 
   async afterRender() {
-    // Do your job here
+    await this.#presenter.init();
   }
 }
