@@ -1,5 +1,13 @@
 import { getAuthToken, isAuthenticated } from '../../utils/auth';
 import { isOffline } from '../../utils/network-status';
+import {
+  getSavedStoryIds,
+  getAllSavedStories,
+  putSavedStory,
+  deleteSavedStory,
+} from '../../data/database';
+import { showToast } from '../../utils/toast';
+import { notifySavedChanged } from '../../utils/sync-manager';
 
 export default class HomePresenter {
   #view;
@@ -7,6 +15,8 @@ export default class HomePresenter {
   #allStories = [];
   #searchQuery = '';
   #activeStoryId = null;
+  #savedIds = new Set();
+  #isOfflineSource = false;
 
   constructor({ view, model }) {
     this.#view = view;
@@ -38,10 +48,15 @@ export default class HomePresenter {
     this.#view.bindStoryCardClick((storyId, options) => {
       this.#handleStoryCardClick(storyId, options);
     });
+
+    this.#view.bindSaveStoryClick((storyId, isSaved) => {
+      this.#handleToggleSave(storyId, isSaved);
+    });
   }
 
   async fetchStories() {
     this.#view.showLoading();
+    await this.#loadSavedIds();
 
     try {
       const token = getAuthToken();
@@ -52,10 +67,16 @@ export default class HomePresenter {
         return;
       }
 
+      this.#isOfflineSource = false;
+      this.#view.hideOfflineNotice();
       this.#allStories = stories;
       this.#applyFiltersAndRender();
     } catch (error) {
       console.error('HomePresenter fetchStories error:', error);
+
+      const hasFallback = await this.#renderSavedFallback();
+      if (hasFallback) return;
+
       const isAuth = isAuthenticated();
 
       if (isOffline()) {
@@ -72,6 +93,64 @@ export default class HomePresenter {
       } else {
         this.#view.showError(error.message || 'Gagal memuat daftar cerita. Silakan coba lagi nanti.');
       }
+    }
+  }
+
+  async #loadSavedIds() {
+    try {
+      this.#savedIds = await getSavedStoryIds();
+    } catch (error) {
+      console.warn('Gagal membaca daftar cerita tersimpan:', error);
+      this.#savedIds = new Set();
+    }
+  }
+
+  async #renderSavedFallback() {
+    try {
+      const savedStories = await getAllSavedStories();
+      if (savedStories.length === 0) return false;
+
+      this.#isOfflineSource = true;
+      this.#allStories = savedStories.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      this.#applyFiltersAndRender();
+      this.#view.showOfflineNotice(
+        `Menampilkan ${savedStories.length} cerita dari penyimpanan perangkat (IndexedDB) karena data terbaru tidak dapat dimuat.`
+      );
+      return true;
+    } catch (fallbackError) {
+      console.warn('Gagal memuat cerita tersimpan sebagai cadangan:', fallbackError);
+      return false;
+    }
+  }
+
+  async #handleToggleSave(storyId, isCurrentlySaved) {
+    const story = this.#allStories.find((item) => item.id === storyId);
+    if (!story) return;
+
+    try {
+      if (isCurrentlySaved) {
+        await deleteSavedStory(storyId);
+        this.#savedIds.delete(storyId);
+        this.#view.updateSaveButtonState(storyId, false, story.name);
+        showToast('Cerita dihapus dari penyimpanan perangkat.', 'info');
+
+        if (this.#isOfflineSource) {
+          this.#allStories = this.#allStories.filter((item) => item.id !== storyId);
+          this.#applyFiltersAndRender();
+        }
+      } else {
+        await putSavedStory(story);
+        this.#savedIds.add(storyId);
+        this.#view.updateSaveButtonState(storyId, true, story.name);
+        showToast('Cerita disimpan dan dapat dibuka saat offline.', 'success');
+      }
+
+      notifySavedChanged();
+    } catch (error) {
+      console.error('Gagal memperbarui cerita tersimpan:', error);
+      showToast('Gagal menyimpan cerita ke IndexedDB.', 'error');
     }
   }
 
@@ -101,7 +180,7 @@ export default class HomePresenter {
     }
 
     // Render list & markers
-    this.#view.showStories(filtered, this.#activeStoryId, this.#allStories.length);
+    this.#view.showStories(filtered, this.#activeStoryId, this.#allStories.length, this.#savedIds);
     this.#view.renderMarkers(
       filtered,
       this.#activeStoryId,

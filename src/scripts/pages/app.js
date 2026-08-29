@@ -10,6 +10,7 @@ import {
 } from '../utils/notification-helper';
 import { showToast } from '../utils/toast';
 import { syncInstallButtons } from '../utils/install-prompt';
+import { notifyOutboxChanged } from '../utils/sync-manager';
 
 class App {
   #content = null;
@@ -88,6 +89,7 @@ class App {
       navList.innerHTML = `
         <li><a href="#/">Beranda</a></li>
         <li><a href="#/about">About</a></li>
+        <li><a href="#/saved" class="nav-saved-link">Tersimpan<span class="outbox-badge-dot" data-outbox-badge hidden></span></a></li>
         <li><span class="user-greeting">${user?.name || 'User'}</span></li>
         ${isPushSupported()
           ? `<li>
@@ -109,6 +111,7 @@ class App {
 
       this.#setupPushToggle();
       syncInstallButtons();
+      notifyOutboxChanged();
 
       const logoutButton = navList.querySelector('#logout-button');
       if (logoutButton) {
@@ -127,12 +130,14 @@ class App {
       navList.innerHTML = `
         <li><a href="#/">Beranda</a></li>
         <li><a href="#/about">About</a></li>
+        <li><a href="#/saved" class="nav-saved-link">Tersimpan<span class="outbox-badge-dot" data-outbox-badge hidden></span></a></li>
         <li><a href="#/register">Daftar</a></li>
         <li><a href="#/login">Masuk</a></li>
         ${this.#renderInstallItem()}
       `;
 
       syncInstallButtons();
+      notifyOutboxChanged();
     }
   }
 

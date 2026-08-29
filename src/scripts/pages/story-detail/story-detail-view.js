@@ -53,7 +53,7 @@ export default class StoryDetailView {
     }
   }
 
-  showStory(story) {
+  showStory(story, { isSaved = false } = {}) {
     const loadingEl = document.querySelector('#detail-loading');
     const errorEl = document.querySelector('#detail-error');
     const contentEl = document.querySelector('#detail-content');
@@ -84,8 +84,20 @@ export default class StoryDetailView {
 
       <div class="detail-body">
         <header class="detail-header">
-          <h2 class="detail-author">${story.name}</h2>
-          ${formattedDate ? `<time class="detail-date" datetime="${story.createdAt}">${formattedDate}</time>` : ''}
+          <div class="detail-header-text">
+            <h2 class="detail-author">${story.name}</h2>
+            ${formattedDate ? `<time class="detail-date" datetime="${story.createdAt}">${formattedDate}</time>` : ''}
+          </div>
+          <button
+            type="button"
+            id="detail-save-button"
+            class="btn-save-story btn-save-story--detail ${isSaved ? 'is-saved' : ''}"
+            aria-pressed="${isSaved ? 'true' : 'false'}"
+            aria-label="${isSaved ? 'Hapus cerita ini dari penyimpanan perangkat' : 'Simpan cerita ini ke perangkat'}"
+          >
+            <span class="save-icon" aria-hidden="true">${isSaved ? '&#9733;' : '&#9734;'}</span>
+            <span class="save-label">${isSaved ? 'Tersimpan' : 'Simpan Cerita'}</span>
+          </button>
         </header>
 
         <p class="detail-description">${story.description || 'Tidak ada deskripsi.'}</p>
@@ -133,6 +145,43 @@ export default class StoryDetailView {
     setTimeout(() => {
       if (this.#map) this.#map.invalidateSize();
     }, 250);
+  }
+
+  bindSaveClick(handler) {
+    const button = document.querySelector('#detail-save-button');
+    if (!button) return;
+
+    button.addEventListener('click', () => {
+      handler(button.getAttribute('aria-pressed') === 'true');
+    });
+  }
+
+  updateSaveState(isSaved) {
+    const button = document.querySelector('#detail-save-button');
+    if (!button) return;
+
+    button.classList.toggle('is-saved', isSaved);
+    button.setAttribute('aria-pressed', isSaved ? 'true' : 'false');
+    button.setAttribute(
+      'aria-label',
+      isSaved ? 'Hapus cerita ini dari penyimpanan perangkat' : 'Simpan cerita ini ke perangkat'
+    );
+
+    const icon = button.querySelector('.save-icon');
+    const label = button.querySelector('.save-label');
+    if (icon) icon.innerHTML = isSaved ? '&#9733;' : '&#9734;';
+    if (label) label.textContent = isSaved ? 'Tersimpan' : 'Simpan Cerita';
+  }
+
+  showOfflineNotice(message) {
+    const contentEl = document.querySelector('#detail-content');
+    if (!contentEl) return;
+
+    const notice = document.createElement('p');
+    notice.className = 'offline-source-notice';
+    notice.setAttribute('role', 'status');
+    notice.textContent = message;
+    contentEl.prepend(notice);
   }
 
   destroy() {

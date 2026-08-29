@@ -430,7 +430,7 @@ export default class HomeView {
   }
 
   // --- Story Cards List ---
-  showStories(stories, activeStoryId = null, totalCount = 0) {
+  showStories(stories, activeStoryId = null, totalCount = 0, savedIds = new Set()) {
     const loadingEl = this.getLoadingElement();
     const errorEl = this.getErrorElement();
     const emptyEl = this.getEmptyElement();
@@ -449,12 +449,12 @@ export default class HomeView {
     if (listEl) {
       listEl.style.display = 'grid';
       listEl.innerHTML = stories
-        .map((story) => this._renderStoryItem(story, story.id === activeStoryId))
+        .map((story) => this._renderStoryItem(story, story.id === activeStoryId, savedIds.has(story.id)))
         .join('');
     }
   }
 
-  _renderStoryItem(story, isActive = false) {
+  _renderStoryItem(story, isActive = false, isSaved = false) {
     const formattedDate = story.createdAt ? showFormattedDate(story.createdAt, 'id-ID') : '';
     const hasLocation = typeof story.lat === 'number' && typeof story.lon === 'number' && !isNaN(story.lat) && !isNaN(story.lon);
     const shortDesc = story.description ? story.description.substring(0, 60) : '';
@@ -488,9 +488,22 @@ export default class HomeView {
 
           <p class="story-description">${story.description || 'Tidak ada deskripsi.'}</p>
 
-          <a href="#/stories/${story.id}" class="btn-detail-link" aria-label="Lihat detail cerita oleh ${story.name}">
-            Lihat Detail Cerita
-          </a>
+          <div class="story-actions">
+            <a href="#/stories/${story.id}" class="btn-detail-link" aria-label="Lihat detail cerita oleh ${story.name}">
+              Lihat Detail Cerita
+            </a>
+            <button
+              type="button"
+              class="btn-save-story ${isSaved ? 'is-saved' : ''}"
+              data-save-id="${story.id}"
+              aria-pressed="${isSaved ? 'true' : 'false'}"
+              aria-label="${isSaved ? `Hapus cerita oleh ${story.name} dari penyimpanan perangkat` : `Simpan cerita oleh ${story.name} ke perangkat`}"
+              title="${isSaved ? 'Cerita tersimpan di perangkat' : 'Simpan cerita untuk dibaca offline'}"
+            >
+              <span class="save-icon" aria-hidden="true">${isSaved ? '&#9733;' : '&#9734;'}</span>
+              <span class="save-label">${isSaved ? 'Tersimpan' : 'Simpan'}</span>
+            </button>
+          </div>
 
           <div class="story-footer">
             ${hasLocation
@@ -565,6 +578,7 @@ export default class HomeView {
 
     listEl.addEventListener('click', (event) => {
       if (event.target.closest('.btn-detail-link')) return;
+      if (event.target.closest('.btn-save-story')) return;
 
       const locateBtn = event.target.closest('.btn-locate-map');
       const card = event.target.closest('.story-card');
@@ -586,6 +600,7 @@ export default class HomeView {
     listEl.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
         if (event.target.closest('.btn-detail-link')) return;
+        if (event.target.closest('.btn-save-story')) return;
 
         const card = event.target.closest('.story-card');
         if (card) {
@@ -595,6 +610,65 @@ export default class HomeView {
         }
       }
     });
+  }
+
+  bindSaveStoryClick(onToggleSave) {
+    const listEl = this.getStoriesListElement();
+    if (!listEl) return;
+
+    listEl.addEventListener('click', (event) => {
+      const button = event.target.closest('.btn-save-story');
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const storyId = button.getAttribute('data-save-id');
+      const isSaved = button.getAttribute('aria-pressed') === 'true';
+      if (storyId) onToggleSave(storyId, isSaved);
+    });
+  }
+
+  updateSaveButtonState(storyId, isSaved, storyName = 'cerita ini') {
+    const button = document.querySelector(`.btn-save-story[data-save-id="${storyId}"]`);
+    if (!button) return;
+
+    button.classList.toggle('is-saved', isSaved);
+    button.setAttribute('aria-pressed', isSaved ? 'true' : 'false');
+    button.setAttribute(
+      'aria-label',
+      isSaved
+        ? `Hapus cerita oleh ${storyName} dari penyimpanan perangkat`
+        : `Simpan cerita oleh ${storyName} ke perangkat`
+    );
+    button.title = isSaved ? 'Cerita tersimpan di perangkat' : 'Simpan cerita untuk dibaca offline';
+
+    const icon = button.querySelector('.save-icon');
+    const label = button.querySelector('.save-label');
+    if (icon) icon.innerHTML = isSaved ? '&#9733;' : '&#9734;';
+    if (label) label.textContent = isSaved ? 'Tersimpan' : 'Simpan';
+  }
+
+  showOfflineNotice(message) {
+    const listEl = this.getStoriesListElement();
+    if (!listEl || !listEl.parentElement) return;
+
+    let notice = document.querySelector('#offline-source-notice');
+    if (!notice) {
+      notice = document.createElement('p');
+      notice.id = 'offline-source-notice';
+      notice.className = 'offline-source-notice';
+      notice.setAttribute('role', 'status');
+      listEl.parentElement.insertBefore(notice, listEl);
+    }
+
+    notice.textContent = message;
+    notice.hidden = false;
+  }
+
+  hideOfflineNotice() {
+    const notice = document.querySelector('#offline-source-notice');
+    if (notice) notice.hidden = true;
   }
 
   destroy() {

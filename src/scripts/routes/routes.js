@@ -4,12 +4,14 @@ import RegisterPage from '../pages/register/register-page';
 import LoginPage from '../pages/login/login-page';
 import AddStoryPage from '../pages/add-story/add-story-page';
 import StoryDetailPage from '../pages/story-detail/story-detail-page';
+import SavedPage from '../pages/saved/saved-page';
 
 const routes = {
   '/': new HomePage(),
   '/about': new AboutPage(),
   '/add-story': new AddStoryPage(),
   '/stories/:id': new StoryDetailPage(),
+  '/saved': new SavedPage(),
   '/register': new RegisterPage(),
   '/login': new LoginPage(),
 };

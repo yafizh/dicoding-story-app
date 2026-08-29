@@ -1,5 +1,7 @@
 import { getAuthToken } from '../../utils/auth';
 import { sendStoryContextToServiceWorker } from '../../utils/notification-helper';
+import { isOffline } from '../../utils/network-status';
+import { queueStoryForSync } from '../../utils/sync-manager';
 
 export default class AddStoryPresenter {
   #view;
@@ -251,15 +253,20 @@ export default class AddStoryPresenter {
     this.#view.stopCamera();
     this.#view.setLoading(true);
 
-    try {
-      const token = getAuthToken();
-      const payload = {
-        description: this.#description.trim(),
-        photo: this.#photoFile,
-        lat: this.#lat,
-        lon: this.#lon,
-      };
+    const payload = {
+      description: this.#description.trim(),
+      photo: this.#photoFile,
+      lat: this.#lat,
+      lon: this.#lon,
+    };
 
+    try {
+      if (isOffline()) {
+        await this.#queueOfflineStory(payload);
+        return;
+      }
+
+      const token = getAuthToken();
       const response = await this.#model.addStory(payload, token);
 
       await this.#syncLatestStoryContext(token);
@@ -269,17 +276,26 @@ export default class AddStoryPresenter {
         'success'
       );
 
-      // Clean up inputs and state
-      this.#photoFile = null;
-      this.#description = '';
-      this.#lat = null;
-      this.#lon = null;
-
-      setTimeout(() => {
-        location.hash = '#/';
-      }, 1500);
+      this.#resetFormState();
+      this.#redirectTo('#/', 1500);
     } catch (error) {
       console.error('Error submitting story:', error);
+
+      if (isOffline() || this.#isNetworkError(error)) {
+        try {
+          await this.#queueOfflineStory(payload);
+          return;
+        } catch (queueError) {
+          console.error('Gagal menyimpan cerita ke antrean offline:', queueError);
+          this.#view.showAlert(
+            'Koneksi terputus dan cerita gagal disimpan ke penyimpanan perangkat. ' +
+              'Pastikan browser Anda mengizinkan penyimpanan data situs, lalu coba lagi.',
+            'error'
+          );
+          return;
+        }
+      }
+
       this.#view.showAlert(
         error.message || 'Gagal menerbitkan cerita. Periksa koneksi internet Anda dan coba lagi.',
         'error'
@@ -287,6 +303,45 @@ export default class AddStoryPresenter {
     } finally {
       this.#view.setLoading(false);
     }
+  }
+
+  #isNetworkError(error) {
+    if (!error) return false;
+    if (error instanceof TypeError) return true;
+
+    const message = String(error.message || '').toLowerCase();
+    return (
+      message.includes('failed to fetch') ||
+      message.includes('networkerror') ||
+      message.includes('network request failed') ||
+      message.includes('load failed')
+    );
+  }
+
+  async #queueOfflineStory(payload) {
+    await queueStoryForSync(payload);
+
+    this.#view.showAlert(
+      'Anda sedang offline. Cerita disimpan di perangkat (IndexedDB) dan akan dikirim otomatis ' +
+        'begitu koneksi kembali tersedia. Mengalihkan ke halaman Tersimpan...',
+      'success'
+    );
+
+    this.#resetFormState();
+    this.#redirectTo('#/saved', 2200);
+  }
+
+  #resetFormState() {
+    this.#photoFile = null;
+    this.#description = '';
+    this.#lat = null;
+    this.#lon = null;
+  }
+
+  #redirectTo(hash, delay) {
+    setTimeout(() => {
+      location.hash = hash;
+    }, delay);
   }
 
   async #syncLatestStoryContext(token) {
