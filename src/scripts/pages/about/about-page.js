@@ -1,13 +1,22 @@
+import AboutView from './about-view';
+import AboutPresenter from './about-presenter';
+
 export default class AboutPage {
+  #view;
+  #presenter;
+
+  constructor() {
+    this.#view = new AboutView();
+    this.#presenter = new AboutPresenter({
+      view: this.#view,
+    });
+  }
+
   async render() {
-    return `
-      <section class="container">
-        <h1>About Page</h1>
-      </section>
-    `;
+    return this.#view.getTemplate();
   }
 
   async afterRender() {
-    // Do your job here
+    await this.#presenter.init();
   }
 }
