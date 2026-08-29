@@ -53,14 +53,25 @@ export async function login({ email, password }) {
   }
 }
 
-export async function getAllStories(token = null) {
+export async function getAllStories(token = null, options = {}) {
   try {
     const headers = {};
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    const response = await fetch(ENDPOINTS.STORIES, { headers });
+    const queryParams = new URLSearchParams();
+    if (options.location !== undefined) {
+      queryParams.append('location', options.location);
+    } else {
+      // Default to location=1 to fetch stories with coordinates when available
+      queryParams.append('location', 1);
+    }
+    if (options.page !== undefined) queryParams.append('page', options.page);
+    if (options.size !== undefined) queryParams.append('size', options.size);
+
+    const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+    const response = await fetch(`${ENDPOINTS.STORIES}${queryString}`, { headers });
     const responseJson = await response.json();
 
     if (!response.ok) {
