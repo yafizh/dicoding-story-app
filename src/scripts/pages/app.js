@@ -9,6 +9,7 @@ import {
   unsubscribePush,
 } from '../utils/notification-helper';
 import { showToast } from '../utils/toast';
+import { syncInstallButtons } from '../utils/install-prompt';
 
 class App {
   #content = null;
@@ -87,6 +88,7 @@ class App {
       navList.innerHTML = `
         <li><a href="#/">Beranda</a></li>
         <li><a href="#/about">About</a></li>
+        <li><span class="user-greeting">${user?.name || 'User'}</span></li>
         ${isPushSupported()
           ? `<li>
               <button
@@ -101,11 +103,12 @@ class App {
               </button>
             </li>`
           : ''}
-        <li><span class="user-greeting">${user?.name || 'User'}</span></li>
+        ${this.#renderInstallItem()}
         <li><button type="button" id="logout-button" class="nav-logout-btn" aria-label="Keluar dari akun">Keluar</button></li>
       `;
 
       this.#setupPushToggle();
+      syncInstallButtons();
 
       const logoutButton = navList.querySelector('#logout-button');
       if (logoutButton) {
@@ -126,8 +129,26 @@ class App {
         <li><a href="#/about">About</a></li>
         <li><a href="#/register">Daftar</a></li>
         <li><a href="#/login">Masuk</a></li>
+        ${this.#renderInstallItem()}
       `;
+
+      syncInstallButtons();
     }
+  }
+
+  #renderInstallItem() {
+    return `
+      <li class="nav-install-item" hidden>
+        <button
+          type="button"
+          class="install-button install-button--nav"
+          hidden
+          aria-label="Instal Story App ke perangkat Anda"
+        >
+          Instal Aplikasi
+        </button>
+      </li>
+    `;
   }
 
   async #setupPushToggle() {

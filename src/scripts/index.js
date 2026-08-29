@@ -4,9 +4,14 @@ import '../styles/styles.css';
 
 import App from './pages/app';
 import { registerServiceWorker } from './utils/sw-register';
+import { initInstallPrompt } from './utils/install-prompt';
+import { initNetworkStatus } from './utils/network-status';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await registerServiceWorker();
+
+  initInstallPrompt();
+  initNetworkStatus();
 
   const app = new App({
     content: document.querySelector('#main-content'),

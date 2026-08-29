@@ -1,0 +1,107 @@
+.install-button {
+  min-height: 40px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.install-button::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 19h16' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
+}
+
+.install-button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  box-shadow: var(--shadow-md);
+}
+
+.install-button:focus-visible {
+  outline: 3px solid var(--primary-focus);
+  outline-offset: 2px;
+}
+
+.install-button:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.install-button[hidden] {
+  display: none;
+}
+
+.install-button--bar {
+  margin-left: auto;
+  margin-right: 8px;
+}
+
+.nav-list li.nav-install-item,
+.nav-list li.nav-install-item[hidden] {
+  display: none;
+}
+
+.install-button--nav {
+  width: 100%;
+  justify-content: center;
+}
+
+@media screen and (max-width: 480px) {
+  .install-button {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .install-button--bar {
+    display: none;
+  }
+
+  .nav-list li.nav-install-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-list li.nav-install-item[hidden] {
+    display: none;
+  }
+
+  .install-button--nav {
+    width: auto;
+  }
+}
+
+.offline-banner {
+  padding: 10px 16px;
+  text-align: center;
+  background-color: #fef3c7;
+  color: #92400e;
+  border-bottom: 1px solid #fcd34d;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.offline-banner[hidden] {
+  display: none;
+}
+
+body.is-offline .story-image,
+body.is-offline .detail-image {
+  filter: saturate(0.92);
+}

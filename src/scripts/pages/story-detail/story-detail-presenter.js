@@ -1,5 +1,6 @@
 import { getAuthToken } from '../../utils/auth';
 import { sendStoryContextToServiceWorker } from '../../utils/notification-helper';
+import { isOffline } from '../../utils/network-status';
 
 export default class StoryDetailPresenter {
   #view;
@@ -29,11 +30,17 @@ export default class StoryDetailPresenter {
 
       this.#view.showStory(story);
 
-      // Perbarui konteks service worker supaya notifikasi berikutnya
-      // dapat menampilkan data cerita ini secara dinamis.
       sendStoryContextToServiceWorker(story);
     } catch (error) {
       console.error('StoryDetailPresenter init error:', error);
+
+      if (isOffline()) {
+        this.#view.showError(
+          'Anda sedang offline dan detail cerita ini belum tersimpan di perangkat. Sambungkan kembali ke internet lalu coba lagi.'
+        );
+        return;
+      }
+
       const token = getAuthToken();
       this.#view.showError(
         token

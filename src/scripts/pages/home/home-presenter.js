@@ -1,4 +1,5 @@
 import { getAuthToken, isAuthenticated } from '../../utils/auth';
+import { isOffline } from '../../utils/network-status';
 
 export default class HomePresenter {
   #view;
@@ -56,6 +57,14 @@ export default class HomePresenter {
     } catch (error) {
       console.error('HomePresenter fetchStories error:', error);
       const isAuth = isAuthenticated();
+
+      if (isOffline()) {
+        this.#view.showError(
+          'Anda sedang offline dan cerita ini belum pernah tersimpan di perangkat. Sambungkan kembali ke internet untuk memuat data terbaru.'
+        );
+        return;
+      }
+
       if (!isAuth) {
         this.#view.showError(
           'Gagal memuat cerita. Anda perlu login terlebih dahulu untuk mengakses data cerita.'
