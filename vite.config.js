@@ -43,6 +43,7 @@ function injectPrecacheManifest({ swSource, swOutput }) {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/dicoding-story-app/',
   root: resolve(__dirname, 'src'),
   publicDir: resolve(__dirname, 'src', 'public'),
   envDir: resolve(__dirname),
