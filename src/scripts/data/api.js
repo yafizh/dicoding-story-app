@@ -4,6 +4,7 @@ const ENDPOINTS = {
   REGISTER: `${CONFIG.BASE_URL}/register`,
   LOGIN: `${CONFIG.BASE_URL}/login`,
   STORIES: `${CONFIG.BASE_URL}/stories`,
+  STORIES_GUEST: `${CONFIG.BASE_URL}/stories/guest`,
   STORY_DETAIL: (id) => `${CONFIG.BASE_URL}/stories/${id}`,
 };
 
@@ -102,6 +103,47 @@ export async function getStoryDetail(id, token = null) {
     return responseJson.story;
   } catch (error) {
     console.error('API Error in getStoryDetail:', error);
+    throw error;
+  }
+}
+
+export async function addStory({ description, photo, lat, lon }, token = null) {
+  try {
+    const formData = new FormData();
+    formData.append('description', description);
+    formData.append('photo', photo);
+
+    if (lat !== null && lat !== undefined && lat !== '') {
+      formData.append('lat', parseFloat(lat));
+    }
+    if (lon !== null && lon !== undefined && lon !== '') {
+      formData.append('lon', parseFloat(lon));
+    }
+
+    const headers = {};
+    let endpoint = ENDPOINTS.STORIES;
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    } else {
+      endpoint = ENDPOINTS.STORIES_GUEST;
+    }
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    const responseJson = await response.json();
+
+    if (!response.ok) {
+      throw new Error(responseJson.message || 'Gagal menambahkan cerita');
+    }
+
+    return responseJson;
+  } catch (error) {
+    console.error('API Error in addStory:', error);
     throw error;
   }
 }

@@ -84,11 +84,24 @@ class App {
     });
   }
 
+  #currentPage = null;
+
   async renderPage() {
+    // Cleanup previous page resources (e.g. active camera streams, map instances)
+    if (this.#currentPage && typeof this.#currentPage.destroy === 'function') {
+      try {
+        this.#currentPage.destroy();
+      } catch (e) {
+        console.warn('Error during page cleanup:', e);
+      }
+      this.#currentPage = null;
+    }
+
     this.#renderNavigation();
 
     const url = getActiveRoute();
     const page = routes[url];
+    this.#currentPage = page || null;
 
     const renderContent = async () => {
       if (!page) {

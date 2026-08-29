@@ -21,4 +21,11 @@ export default class HomePage {
   async afterRender() {
     await this.#presenter.init();
   }
+
+  destroy() {
+    if (this.#view && typeof this.#view.destroy === 'function') {
+      this.#view.destroy();
+    }
+  }
 }
+

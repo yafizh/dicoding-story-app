@@ -15,6 +15,11 @@ export default class HomeView {
           <p class="hero-description">
             Temukan kisah inspiratif dari berbagai penjuru dengan visualisasi peta interaktif dan sinkronisasi data real-time.
           </p>
+          <div class="hero-actions">
+            <a href="#/add-story" class="btn-primary hero-btn">
+              <span>Tambah Cerita Baru</span>
+            </a>
+          </div>
         </div>
       </section>
 
@@ -575,4 +580,14 @@ export default class HomeView {
       }
     });
   }
+
+  destroy() {
+    if (this.#map) {
+      this.#map.remove();
+      this.#map = null;
+      this.#markersMap.clear();
+      this.#activeMarkerId = null;
+    }
+  }
 }
+
