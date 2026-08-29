@@ -128,20 +128,17 @@ export async function putSavedStory(story) {
   return record;
 }
 
-/** READ: mengambil seluruh cerita tersimpan. */
 export async function getAllSavedStories() {
   const stories = await runTransaction(SAVED_STORE, 'readonly', (store) => store.getAll());
   return Array.isArray(stories) ? stories : [];
 }
 
-/** READ: mengambil satu cerita tersimpan berdasarkan id. */
 export async function getSavedStory(id) {
   if (!id) return null;
   const story = await runTransaction(SAVED_STORE, 'readonly', (store) => store.get(id));
   return story || null;
 }
 
-/** READ: mengambil daftar id cerita yang tersimpan (untuk menandai tombol simpan). */
 export async function getSavedStoryIds() {
   const keys = await runTransaction(SAVED_STORE, 'readonly', (store) => store.getAllKeys());
   return new Set(Array.isArray(keys) ? keys : []);
@@ -151,14 +148,12 @@ export async function isStorySaved(id) {
   return Boolean(await getSavedStory(id));
 }
 
-/** DELETE: menghapus satu cerita tersimpan. */
 export async function deleteSavedStory(id) {
   if (!id) return false;
   await runTransaction(SAVED_STORE, 'readwrite', (store) => store.delete(id));
   return true;
 }
 
-/** DELETE: mengosongkan seluruh cerita tersimpan. */
 export async function clearSavedStories() {
   await runTransaction(SAVED_STORE, 'readwrite', (store) => store.clear());
   return true;
@@ -169,11 +164,6 @@ export async function countSavedStories() {
   return total || 0;
 }
 
-/* ------------------------------------------------------------------ */
-/* Antrean Offline (Outbox)                                             */
-/* ------------------------------------------------------------------ */
-
-/** CREATE: menambahkan cerita baru ke antrean offline. */
 export async function addOutboxStory({ description, photo, lat, lon }) {
   if (!photo) {
     throw new Error('Foto cerita wajib disertakan.');
@@ -197,7 +187,6 @@ export async function addOutboxStory({ description, photo, lat, lon }) {
   return { ...record, id };
 }
 
-/** READ: mengambil seluruh antrean offline, terlama lebih dulu. */
 export async function getAllOutboxStories() {
   const records = await runTransaction(OUTBOX_STORE, 'readonly', (store) => store.getAll());
   const list = Array.isArray(records) ? records : [];
@@ -210,7 +199,6 @@ export async function getOutboxStory(id) {
   return record || null;
 }
 
-/** UPDATE: memperbarui status antrean (mis. menandai gagal kirim). */
 export async function updateOutboxStory(record) {
   if (!record || record.id === undefined) {
     throw new Error('Data antrean tidak valid.');
@@ -219,7 +207,6 @@ export async function updateOutboxStory(record) {
   return record;
 }
 
-/** DELETE: menghapus satu item antrean offline. */
 export async function deleteOutboxStory(id) {
   if (id === undefined || id === null) return false;
   await runTransaction(OUTBOX_STORE, 'readwrite', (store) => store.delete(Number(id)));
