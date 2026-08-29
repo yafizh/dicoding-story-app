@@ -6,34 +6,66 @@ class App {
   #content = null;
   #drawerButton = null;
   #navigationDrawer = null;
+  #skipLink = null;
 
   constructor({ navigationDrawer, drawerButton, content }) {
     this.#content = content;
     this.#drawerButton = drawerButton;
     this.#navigationDrawer = navigationDrawer;
+    this.#skipLink = document.querySelector('.skip-link');
 
+    this.#setupSkipLink();
     this.#setupDrawer();
   }
 
+  #setupSkipLink() {
+    if (!this.#skipLink || !this.#content) return;
+
+    this.#skipLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      this.#content.focus();
+      this.#content.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
   #setupDrawer() {
+    const closeDrawer = () => {
+      this.#navigationDrawer.classList.remove('open');
+      this.#drawerButton.setAttribute('aria-expanded', 'false');
+    };
+
+    const toggleDrawer = () => {
+      const isOpen = this.#navigationDrawer.classList.toggle('open');
+      this.#drawerButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    };
+
     this.#drawerButton.addEventListener('click', (event) => {
       event.stopPropagation();
-      this.#navigationDrawer.classList.toggle('open');
+      toggleDrawer();
     });
 
+    // Close on click outside or clicking on any drawer item
     document.body.addEventListener('click', (event) => {
       if (
         !this.#navigationDrawer.contains(event.target) &&
         !this.#drawerButton.contains(event.target)
       ) {
-        this.#navigationDrawer.classList.remove('open');
+        closeDrawer();
       }
 
       this.#navigationDrawer.querySelectorAll('a, button').forEach((element) => {
         if (element.contains(event.target)) {
-          this.#navigationDrawer.classList.remove('open');
+          closeDrawer();
         }
       });
+    });
+
+    // Close drawer when pressing Escape key (Keyboard accessibility)
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && this.#navigationDrawer.classList.contains('open')) {
+        closeDrawer();
+        this.#drawerButton.focus();
+      }
     });
   }
 
@@ -48,7 +80,7 @@ class App {
         <li><a href="#/">Beranda</a></li>
         <li><a href="#/about">About</a></li>
         <li><span class="user-greeting">${user?.name || 'User'}</span></li>
-        <li><button type="button" id="logout-button" class="nav-logout-btn">Keluar</button></li>
+        <li><button type="button" id="logout-button" class="nav-logout-btn" aria-label="Keluar dari akun">Keluar</button></li>
       `;
 
       const logoutButton = navList.querySelector('#logout-button');
@@ -78,8 +110,10 @@ class App {
 
       if (routePath === currentPath) {
         link.classList.add('active');
+        link.setAttribute('aria-current', 'page');
       } else {
         link.classList.remove('active');
+        link.removeAttribute('aria-current');
       }
     });
   }
@@ -106,9 +140,9 @@ class App {
     const renderContent = async () => {
       if (!page) {
         this.#content.innerHTML = `
-          <section class="container not-found-section">
+          <section class="container not-found-section" aria-labelledby="not-found-title">
             <div class="not-found-card">
-              <h1>404</h1>
+              <h1 id="not-found-title">404</h1>
               <h2>Halaman Tidak Ditemukan</h2>
               <p>Maaf, halaman yang Anda tuju tidak dapat ditemukan.</p>
               <a href="#/" class="btn-primary">Kembali ke Beranda</a>

@@ -9,14 +9,14 @@ export default class HomeView {
 
   getTemplate() {
     return `
-      <section class="container hero-section">
+      <section class="container hero-section" aria-labelledby="hero-title">
         <div class="hero-content">
-          <h1 class="hero-title">Jelajahi Cerita Menarik & Peta Lokasi</h1>
+          <h1 id="hero-title" class="hero-title">Jelajahi Cerita Menarik & Peta Lokasi</h1>
           <p class="hero-description">
             Temukan kisah inspiratif dari berbagai penjuru dengan visualisasi peta interaktif dan sinkronisasi data real-time.
           </p>
           <div class="hero-actions">
-            <a href="#/add-story" class="btn-primary hero-btn">
+            <a href="#/add-story" class="btn-primary hero-btn" aria-label="Tambah Cerita Baru">
               <span>Tambah Cerita Baru</span>
             </a>
           </div>
@@ -25,26 +25,26 @@ export default class HomeView {
 
       <!-- Map Visualization Section -->
       <section class="container map-section" aria-labelledby="map-heading">
-        <div class="section-header map-header">
+        <header class="section-header map-header">
           <div class="header-titles">
             <h2 id="map-heading" class="section-title">Visualisasi Peta Cerita</h2>
             <p class="section-subtitle">Jelajahi lokasi tempat cerita dibagikan oleh pengguna</p>
           </div>
-          <div class="map-stats-badge" id="map-stats">
-            <span class="pulse-indicator"></span>
+          <div class="map-stats-badge" id="map-stats" role="status" aria-live="polite">
+            <span class="pulse-indicator" aria-hidden="true"></span>
             <span id="map-stats-text">Memuat lokasi peta...</span>
           </div>
-        </div>
+        </header>
 
         <div class="map-card">
-          <div id="story-map" class="story-map" role="region" aria-label="Peta Interaktif Cerita"></div>
-          <div class="map-legend">
+          <div id="story-map" class="story-map" role="region" aria-label="Peta Interaktif Lokasi Cerita"></div>
+          <div class="map-legend" role="note" aria-label="Keterangan Simbol Peta">
             <div class="legend-item">
-              <span class="legend-dot default-dot"></span>
+              <span class="legend-dot default-dot" aria-hidden="true"></span>
               <span>Lokasi Cerita</span>
             </div>
             <div class="legend-item">
-              <span class="legend-dot active-dot"></span>
+              <span class="legend-dot active-dot" aria-hidden="true"></span>
               <span>Marker Terpilih</span>
             </div>
             <div class="legend-item legend-tip">
@@ -57,39 +57,41 @@ export default class HomeView {
       <!-- Stories & Filter Section -->
       <section class="container stories-section" aria-labelledby="stories-heading">
         <div class="filter-toolbar">
-          <div class="filter-header">
+          <header class="filter-header">
             <h2 id="stories-heading" class="section-title">Daftar Cerita</h2>
-            <span class="stories-counter" id="stories-counter">Menampilkan cerita</span>
-          </div>
+            <span class="stories-counter" id="stories-counter" role="status" aria-live="polite">Menampilkan cerita</span>
+          </header>
 
           <div class="filter-controls">
-            <!-- Search Input -->
+            <!-- Search Input with Accessible Label -->
             <div class="search-box">
+              <label for="search-input" class="visually-hidden">Cari cerita berdasarkan nama pengguna atau deskripsi cerita</label>
               <input 
                 type="search" 
                 id="search-input" 
+                name="search"
                 class="search-input" 
                 placeholder="Cari cerita berdasarkan nama atau deskripsi..." 
-                aria-label="Cari cerita"
+                aria-label="Cari cerita berdasarkan nama atau deskripsi"
               />
             </div>
           </div>
         </div>
 
         <!-- Auth Banner if not logged in -->
-        <div id="auth-banner" class="auth-banner" style="display: none;">
+        <aside id="auth-banner" class="auth-banner" style="display: none;" aria-label="Pemberitahuan Masuk">
           <div class="auth-banner-content">
             <div>
               <h3>Masuk untuk Akses Cerita Lengkap</h3>
               <p>Beberapa data cerita mungkin memerlukan login akun. Masuk sekarang untuk pengalaman terbaik.</p>
             </div>
           </div>
-          <a href="#/login" class="btn-primary">Masuk Sekarang</a>
-        </div>
+          <a href="#/login" class="btn-primary" aria-label="Masuk Sekarang ke Akun Anda">Masuk Sekarang</a>
+        </aside>
 
         <!-- Loading State -->
-        <div id="stories-loading" class="loading-container" aria-live="polite">
-          <div class="spinner"></div>
+        <div id="stories-loading" class="loading-container" aria-live="polite" role="status">
+          <div class="spinner" aria-hidden="true"></div>
           <p>Memuat data cerita dan peta...</p>
         </div>
 
@@ -97,13 +99,13 @@ export default class HomeView {
         <div id="stories-error" class="error-container" style="display: none;" role="alert"></div>
 
         <!-- Empty State -->
-        <div id="stories-empty" class="empty-container" style="display: none;">
+        <div id="stories-empty" class="empty-container" style="display: none;" role="status">
           <h3>Tidak Ada Cerita Ditemukan</h3>
           <p id="empty-message">Belum ada cerita yang sesuai dengan filter pencarian Anda.</p>
         </div>
 
         <!-- Stories Grid -->
-        <div id="stories-list" class="stories-grid" style="display: none;"></div>
+        <div id="stories-list" class="stories-grid" style="display: none;" role="feed" aria-label="Daftar Cerita Pengguna"></div>
       </section>
     `;
   }
@@ -342,23 +344,24 @@ export default class HomeView {
         : '';
 
       const popupContent = `
-        <div class="map-popup-card">
-          <div class="map-popup-img-wrapper">
+        <article class="map-popup-card" aria-label="Detail Cerita di Peta oleh ${story.name}">
+          <figure class="map-popup-img-wrapper">
             <img 
               src="${story.photoUrl}" 
-              alt="Foto oleh ${story.name}" 
+              alt="Foto dokumentasi cerita oleh ${story.name}" 
               class="map-popup-img"
               loading="lazy"
-              onerror="this.onerror=null;this.src='https://placehold.co/300x200?text=No+Image';"
+              onerror="this.onerror=null;this.src='https://placehold.co/300x200?text=Gambar+Tidak+Tersedia';"
             />
-          </div>
+            <figcaption class="visually-hidden">Foto cerita oleh ${story.name}</figcaption>
+          </figure>
           <div class="map-popup-info">
             <h4 class="map-popup-author">${story.name}</h4>
-            ${formattedDate ? `<span class="map-popup-date">${formattedDate}</span>` : ''}
+            ${formattedDate ? `<time class="map-popup-date" datetime="${story.createdAt}">${formattedDate}</time>` : ''}
             <span class="map-popup-coords">Lat: ${story.lat.toFixed(4)}, Lon: ${story.lon.toFixed(4)}</span>
             <p class="map-popup-desc">${truncatedDesc}</p>
           </div>
-        </div>
+        </article>
       `;
 
       marker.bindPopup(popupContent, { maxWidth: 280, minWidth: 220, className: 'custom-leaflet-popup' });
@@ -453,6 +456,7 @@ export default class HomeView {
   _renderStoryItem(story, isActive = false) {
     const formattedDate = story.createdAt ? showFormattedDate(story.createdAt, 'id-ID') : '';
     const hasLocation = typeof story.lat === 'number' && typeof story.lon === 'number' && !isNaN(story.lat) && !isNaN(story.lon);
+    const shortDesc = story.description ? story.description.substring(0, 60) : '';
 
     return `
       <article 
@@ -460,25 +464,28 @@ export default class HomeView {
         id="story-card-${story.id}" 
         data-story-id="${story.id}" 
         tabindex="0"
+        role="article"
+        aria-label="Cerita oleh ${story.name}"
         aria-selected="${isActive ? 'true' : 'false'}"
       >
-        <div class="story-image-container">
+        <figure class="story-image-container">
           <img 
             src="${story.photoUrl}" 
-            alt="Foto oleh ${story.name}" 
+            alt="Foto cerita oleh ${story.name}${shortDesc ? ': ' + shortDesc : ''}" 
             class="story-image"
             loading="lazy"
             onerror="this.onerror=null;this.src='https://placehold.co/600x400?text=Gambar+Tidak+Tersedia';"
           />
-        </div>
+          <figcaption class="visually-hidden">Foto cerita oleh ${story.name}</figcaption>
+        </figure>
 
         <div class="story-body">
-          <div class="story-header">
+          <header class="story-header">
             <h3 class="story-author">${story.name}</h3>
-            ${formattedDate ? `<time class="story-date">${formattedDate}</time>` : ''}
-          </div>
+            ${formattedDate ? `<time class="story-date" datetime="${story.createdAt}">${formattedDate}</time>` : ''}
+          </header>
 
-          <p class="story-description">${story.description}</p>
+          <p class="story-description">${story.description || 'Tidak ada deskripsi.'}</p>
 
           <div class="story-footer">
             ${hasLocation
@@ -486,7 +493,7 @@ export default class HomeView {
                   <div class="story-coords-text">
                     <span>Lat: ${story.lat.toFixed(3)}, Lon: ${story.lon.toFixed(3)}</span>
                   </div>
-                  <button type="button" class="btn-locate-map" data-story-id="${story.id}" aria-label="Lihat ${story.name} di peta">
+                  <button type="button" class="btn-locate-map" data-story-id="${story.id}" aria-label="Lihat lokasi cerita ${story.name} di peta">
                     <span>Lihat di Peta</span>
                   </button>
                 `

@@ -1,14 +1,14 @@
 export default class RegisterView {
   getTemplate() {
     return `
-      <section class="container auth-section">
+      <section class="container auth-section" aria-labelledby="register-title">
         <div class="auth-card">
-          <div class="auth-header">
-            <h1 class="auth-title">Daftar Akun Baru</h1>
+          <header class="auth-header">
+            <h1 id="register-title" class="auth-title">Daftar Akun Baru</h1>
             <p class="auth-subtitle">Bergabunglah dan bagikan kisah inspiratif Anda.</p>
-          </div>
+          </header>
 
-          <div id="register-alert" class="alert-container" style="display: none;" role="alert"></div>
+          <div id="register-alert" class="alert-container" style="display: none;" role="alert" aria-live="assertive"></div>
 
           <form id="register-form" class="auth-form" novalidate>
             <div class="form-group">
@@ -20,9 +20,11 @@ export default class RegisterView {
                 class="form-input"
                 placeholder="Masukkan nama lengkap Anda"
                 required
+                aria-required="true"
                 autocomplete="name"
+                aria-describedby="name-error"
               />
-              <span class="form-error" id="name-error"></span>
+              <span class="form-error" id="name-error" role="alert"></span>
             </div>
 
             <div class="form-group">
@@ -34,9 +36,11 @@ export default class RegisterView {
                 class="form-input"
                 placeholder="nama@email.com"
                 required
+                aria-required="true"
                 autocomplete="email"
+                aria-describedby="email-error"
               />
-              <span class="form-error" id="email-error"></span>
+              <span class="form-error" id="email-error" role="alert"></span>
             </div>
 
             <div class="form-group">
@@ -48,21 +52,23 @@ export default class RegisterView {
                 class="form-input"
                 placeholder="Minimal 8 karakter"
                 required
+                aria-required="true"
                 minlength="8"
                 autocomplete="new-password"
+                aria-describedby="password-error"
               />
-              <span class="form-error" id="password-error"></span>
+              <span class="form-error" id="password-error" role="alert"></span>
             </div>
 
-            <button type="submit" id="submit-btn" class="btn-primary btn-block">
+            <button type="submit" id="submit-btn" class="btn-primary btn-block" aria-label="Daftar akun baru">
               <span class="btn-text">Daftar Sekarang</span>
-              <span class="btn-spinner" style="display: none;"></span>
+              <span class="btn-spinner" style="display: none;" aria-hidden="true"></span>
             </button>
           </form>
 
-          <div class="auth-footer">
+          <footer class="auth-footer">
             <p>Sudah punya akun? <a href="#/login" class="auth-link">Masuk di sini</a></p>
-          </div>
+          </footer>
         </div>
       </section>
     `;

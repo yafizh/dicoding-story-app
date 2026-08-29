@@ -6,44 +6,51 @@ header {
   top: 0;
   z-index: 100;
   backdrop-filter: blur(8px);
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.96);
 }
 
 .main-header {
-  min-height: 72px;
+  min-height: 68px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
 }
 
 .brand-name {
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
   text-decoration: none;
   color: var(--primary);
   display: flex;
   align-items: center;
   gap: 8px;
   letter-spacing: -0.5px;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  transition: opacity var(--transition-normal);
 }
 
 .brand-name:hover {
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
+/* Mobile Navigation Drawer */
 .navigation-drawer {
   min-height: 100vh;
-  width: 260px;
-  padding: 24px 16px;
+  width: min(300px, 85vw);
+  padding: 28px 20px;
   background-color: var(--bg-card);
   position: fixed;
   inset-block-start: 0;
   inset-inline-start: 0;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
   transform: translateX(-100%);
-  transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 9999;
+  display: flex;
+  flex-direction: column;
 }
 
 .navigation-drawer.open {
@@ -51,17 +58,21 @@ header {
 }
 
 .drawer-button {
-  padding: 8px 12px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 14px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   background-color: transparent;
-  font-size: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
   color: var(--text-main);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background-color var(--transition-normal);
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 .drawer-button:hover {
@@ -73,16 +84,27 @@ header {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.nav-list li {
+  display: flex;
+  align-items: center;
 }
 
 .nav-list li a {
-  padding: 10px 16px;
+  padding: 12px 18px;
   display: block;
+  width: 100%;
   color: var(--text-muted);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem;
   border-radius: var(--radius-sm);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   transition: all var(--transition-normal);
 }
 
@@ -97,17 +119,22 @@ header {
 }
 
 .user-greeting {
-  display: inline-block;
-  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--primary);
   background-color: var(--primary-light);
   border-radius: var(--radius-sm);
+  width: 100%;
 }
 
 .nav-logout-btn {
-  padding: 8px 16px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 18px;
   background-color: #fee2e2;
   color: #dc2626;
   border: 1px solid #fca5a5;
@@ -117,6 +144,9 @@ header {
   cursor: pointer;
   transition: all var(--transition-normal);
   font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-logout-btn:hover {
@@ -124,6 +154,18 @@ header {
   color: #ffffff;
 }
 
+/* Tablet: 768px */
+@media screen and (min-width: 768px) {
+  .main-header {
+    min-height: 72px;
+  }
+
+  .brand-name {
+    font-size: 1.35rem;
+  }
+}
+
+/* Desktop: 1024px */
 @media screen and (min-width: 1024px) {
   .navigation-drawer {
     min-height: auto;
@@ -133,15 +175,36 @@ header {
     position: static;
     box-shadow: none;
     transform: translateX(0);
+    display: block;
   }
 
   .nav-list {
     flex-direction: row;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    margin-top: 0;
+  }
+
+  .nav-list li a {
+    width: auto;
+    padding: 8px 16px;
+    min-height: 40px;
+  }
+
+  .user-greeting {
+    width: auto;
+    min-height: 40px;
+    padding: 8px 14px;
+  }
+
+  .nav-logout-btn {
+    width: auto;
+    min-height: 40px;
+    padding: 8px 16px;
   }
 
   .drawer-button {
     display: none;
   }
 }
+

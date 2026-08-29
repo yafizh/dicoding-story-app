@@ -1,14 +1,14 @@
 export default class LoginView {
   getTemplate() {
     return `
-      <section class="container auth-section">
+      <section class="container auth-section" aria-labelledby="login-title">
         <div class="auth-card">
-          <div class="auth-header">
-            <h1 class="auth-title">Masuk ke Akun Anda</h1>
+          <header class="auth-header">
+            <h1 id="login-title" class="auth-title">Masuk ke Akun Anda</h1>
             <p class="auth-subtitle">Selamat datang kembali! Masuk untuk melihat dan berbagi cerita.</p>
-          </div>
+          </header>
 
-          <div id="login-alert" class="alert-container" style="display: none;" role="alert"></div>
+          <div id="login-alert" class="alert-container" style="display: none;" role="alert" aria-live="assertive"></div>
 
           <form id="login-form" class="auth-form" novalidate>
             <div class="form-group">
@@ -20,9 +20,11 @@ export default class LoginView {
                 class="form-input"
                 placeholder="nama@email.com"
                 required
+                aria-required="true"
                 autocomplete="email"
+                aria-describedby="email-error"
               />
-              <span class="form-error" id="email-error"></span>
+              <span class="form-error" id="email-error" role="alert"></span>
             </div>
 
             <div class="form-group">
@@ -34,21 +36,23 @@ export default class LoginView {
                 class="form-input"
                 placeholder="Masukkan kata sandi Anda"
                 required
+                aria-required="true"
                 minlength="8"
                 autocomplete="current-password"
+                aria-describedby="password-error"
               />
-              <span class="form-error" id="password-error"></span>
+              <span class="form-error" id="password-error" role="alert"></span>
             </div>
 
-            <button type="submit" id="submit-btn" class="btn-primary btn-block">
+            <button type="submit" id="submit-btn" class="btn-primary btn-block" aria-label="Masuk ke akun">
               <span class="btn-text">Masuk</span>
-              <span class="btn-spinner" style="display: none;"></span>
+              <span class="btn-spinner" style="display: none;" aria-hidden="true"></span>
             </button>
           </form>
 
-          <div class="auth-footer">
+          <footer class="auth-footer">
             <p>Belum punya akun? <a href="#/register" class="auth-link">Daftar sekarang</a></p>
-          </div>
+          </footer>
         </div>
       </section>
     `;

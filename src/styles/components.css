@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  padding: 48px 20px;
   gap: 16px;
   color: var(--text-muted);
 }
@@ -29,7 +29,7 @@
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 40px 24px;
+  padding: 36px 20px;
   text-align: center;
   color: var(--text-muted);
   margin-top: 16px;
@@ -50,11 +50,14 @@
   margin-bottom: 12px;
 }
 
-/* Button Components */
+/* Button Components with Accessible Touch Target (min 44px) */
 .btn-primary {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: var(--primary);
   color: #fff;
+  min-height: 44px;
   padding: 10px 24px;
   border-radius: var(--radius-sm);
   text-decoration: none;
@@ -70,9 +73,12 @@
 }
 
 .btn-secondary {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background-color: #f1f5f9;
   color: var(--text-main);
+  min-height: 44px;
   padding: 8px 18px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
@@ -80,6 +86,7 @@
   cursor: pointer;
   transition: all var(--transition-normal);
   font-family: inherit;
+  text-decoration: none;
 }
 
 .btn-secondary:hover {
@@ -89,7 +96,7 @@
 /* About & 404 Pages */
 .about-section,
 .not-found-section {
-  padding-block: 20px;
+  padding-block: 16px 36px;
 }
 
 .about-card,
@@ -97,7 +104,7 @@
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 40px 32px;
+  padding: 28px 20px;
   box-shadow: var(--shadow-sm);
   max-width: 800px;
   margin: 0 auto;
@@ -105,29 +112,29 @@
 
 .about-header {
   text-align: center;
-  margin-bottom: 32px;
-  padding-bottom: 24px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .about-title {
-  font-size: 2rem;
+  font-size: clamp(1.6rem, 3vw + 0.8rem, 2.25rem);
   font-weight: 800;
   color: var(--text-main);
 }
 
 .about-tagline {
   color: var(--text-muted);
-  font-size: 1.05rem;
+  font-size: 1rem;
   margin-top: 6px;
 }
 
 .about-info-group {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .about-info-group h2 {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   margin-bottom: 12px;
   color: var(--text-main);
 }
@@ -135,40 +142,40 @@
 .features-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .feature-item {
   background-color: var(--bg-page);
-  padding: 24px;
+  padding: 20px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
 }
 
 .feature-item h3 {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
   color: var(--text-main);
 }
 
 .feature-item p {
   color: var(--text-muted);
-  font-size: 0.925rem;
+  font-size: 0.9rem;
 }
 
 .not-found-card {
   text-align: center;
-  padding: 60px 24px;
+  padding: 48px 20px;
 }
 
 .not-found-card h1 {
-  font-size: 4rem;
+  font-size: clamp(3rem, 6vw + 1rem, 4.5rem);
   color: var(--primary);
   font-weight: 900;
 }
 
 .not-found-card h2 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   margin-bottom: 12px;
 }
 
@@ -208,8 +215,16 @@
   }
 }
 
+/* Tablet: 768px */
 @media screen and (min-width: 640px) {
+  .about-card,
+  .not-found-card {
+    padding: 40px 36px;
+  }
+
   .features-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 }
+

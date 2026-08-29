@@ -8,42 +8,58 @@ export default class AddStoryView {
 
   getTemplate() {
     return `
-      <section class="container add-story-section">
+      <section class="container add-story-section" aria-labelledby="form-title">
         <div class="add-story-card">
-          <div class="form-header">
+          <header class="form-header">
             <a href="#/" class="back-link" aria-label="Kembali ke Beranda">
               Kembali ke Beranda
             </a>
-            <h1 class="form-title">Tambah Cerita Baru</h1>
+            <h1 id="form-title" class="form-title">Tambah Cerita Baru</h1>
             <p class="form-subtitle">Bagikan momen, inspirasi, dan lokasi cerita menarik Anda.</p>
-          </div>
+          </header>
 
           <div id="add-story-alert" class="alert-container" style="display: none;" role="alert"></div>
 
           <form id="add-story-form" class="add-story-form" novalidate>
             <!-- Photo Upload & Camera Stream Section -->
-            <div class="form-section">
-              <div class="section-label-group">
-                <label class="form-section-title">Foto Cerita <span class="required-mark">*</span></label>
+            <fieldset class="form-section">
+              <legend class="section-label-group">
+                <span class="form-section-title">Foto Cerita <span class="required-mark" aria-hidden="true">*</span></span>
                 <span class="section-hint">Pilih dari file galeri atau ambil foto langsung dengan kamera</span>
-              </div>
+              </legend>
 
-              <!-- Media Tabs -->
-              <div class="media-tabs" role="tablist">
-                <button type="button" class="tab-btn active" id="tab-upload" role="tab" aria-selected="true">
+              <!-- Media Tabs with Keyboard Navigation -->
+              <div class="media-tabs" role="tablist" aria-label="Metode Pemilihan Foto">
+                <button 
+                  type="button" 
+                  class="tab-btn active" 
+                  id="tab-upload" 
+                  role="tab" 
+                  aria-selected="true"
+                  aria-controls="tab-content-upload"
+                  tabindex="0"
+                >
                   Unggah Berkas
                 </button>
-                <button type="button" class="tab-btn" id="tab-camera" role="tab" aria-selected="false">
+                <button 
+                  type="button" 
+                  class="tab-btn" 
+                  id="tab-camera" 
+                  role="tab" 
+                  aria-selected="false"
+                  aria-controls="tab-content-camera"
+                  tabindex="0"
+                >
                   Kamera Langsung
                 </button>
               </div>
 
               <!-- Tab Content: File Upload -->
-              <div class="tab-content" id="tab-content-upload">
-                <div class="drop-zone" id="drop-zone">
+              <div class="tab-content" id="tab-content-upload" role="tabpanel" aria-labelledby="tab-upload">
+                <div class="drop-zone" id="drop-zone" tabindex="0" role="button" aria-label="Area unggah foto, tekan enter untuk memilih berkas">
                   <div class="drop-zone-content">
                     <p class="drop-text">Tarik & letakkan foto di sini, atau</p>
-                    <label for="photo-input" class="btn-secondary btn-file-label">
+                    <label for="photo-input" class="btn-secondary btn-file-label" id="photo-input-label">
                       Pilih dari Perangkat
                     </label>
                     <input
@@ -52,35 +68,37 @@ export default class AddStoryView {
                       name="photo"
                       accept="image/jpeg,image/png,image/jpg,image/webp"
                       class="file-input-hidden"
+                      aria-label="Pilih berkas gambar foto cerita"
+                      aria-describedby="file-format-hint"
                     />
-                    <small class="file-hint">Format: JPG, PNG, WebP (Maksimal 1MB)</small>
+                    <small class="file-hint" id="file-format-hint">Format: JPG, PNG, WebP (Maksimal 1MB)</small>
                   </div>
                 </div>
               </div>
 
               <!-- Tab Content: Live Camera -->
-              <div class="tab-content" id="tab-content-camera" style="display: none;">
+              <div class="tab-content" id="tab-content-camera" role="tabpanel" aria-labelledby="tab-camera" style="display: none;">
                 <div class="camera-wrapper">
-                  <div class="camera-viewport">
-                    <video id="camera-video" playsinline autoplay muted class="camera-video"></video>
-                    <div id="camera-loading" class="camera-loading" style="display: none;">
-                      <div class="spinner"></div>
+                  <div class="camera-viewport" role="region" aria-label="Jendela Pratinjau Kamera">
+                    <video id="camera-video" playsinline autoplay muted class="camera-video" aria-label="Umpan Video Kamera Langsung"></video>
+                    <div id="camera-loading" class="camera-loading" style="display: none;" role="status" aria-live="polite">
+                      <div class="spinner" aria-hidden="true"></div>
                       <p>Membuka kamera...</p>
                     </div>
-                    <canvas id="camera-canvas" class="camera-canvas" style="display: none;"></canvas>
+                    <canvas id="camera-canvas" class="camera-canvas" style="display: none;" aria-hidden="true"></canvas>
                   </div>
 
                   <div class="camera-controls">
-                    <button type="button" id="btn-start-camera" class="btn-secondary">
+                    <button type="button" id="btn-start-camera" class="btn-secondary" aria-label="Buka akses kamera">
                       Buka Kamera
                     </button>
-                    <button type="button" id="btn-capture-photo" class="btn-primary" style="display: none;">
+                    <button type="button" id="btn-capture-photo" class="btn-primary" style="display: none;" aria-label="Ambil foto dari kamera">
                       Ambil Foto
                     </button>
-                    <button type="button" id="btn-switch-camera" class="btn-secondary" style="display: none;" title="Ganti Kamera Depan/Belakang">
+                    <button type="button" id="btn-switch-camera" class="btn-secondary" style="display: none;" aria-label="Ganti Kamera Depan atau Belakang">
                       Ganti Kamera
                     </button>
-                    <button type="button" id="btn-stop-camera" class="btn-secondary btn-danger-subtle" style="display: none;">
+                    <button type="button" id="btn-stop-camera" class="btn-secondary btn-danger-subtle" style="display: none;" aria-label="Tutup kamera">
                       Tutup Kamera
                     </button>
                   </div>
@@ -88,33 +106,34 @@ export default class AddStoryView {
               </div>
 
               <!-- Image Preview Container -->
-              <div class="photo-preview-container" id="photo-preview-container" style="display: none;">
+              <div class="photo-preview-container" id="photo-preview-container" style="display: none;" role="region" aria-label="Pratinjau Foto Terpilih">
                 <div class="preview-card">
-                  <div class="preview-img-wrapper">
-                    <img id="photo-preview-img" src="" alt="Pratinjau Foto Cerita" class="preview-img" />
-                  </div>
+                  <figure class="preview-img-wrapper">
+                    <img id="photo-preview-img" src="" alt="Pratinjau foto cerita yang dipilih" class="preview-img" />
+                    <figcaption class="visually-hidden">Foto cerita terpilih</figcaption>
+                  </figure>
                   <div class="preview-details">
                     <div class="preview-meta">
                       <span class="preview-badge" id="preview-badge">Foto Terpilih</span>
                       <span class="preview-name" id="preview-name">-</span>
                       <span class="preview-size" id="preview-size">-</span>
                     </div>
-                    <button type="button" id="btn-remove-photo" class="btn-secondary btn-remove-photo" title="Hapus foto terpilih">
+                    <button type="button" id="btn-remove-photo" class="btn-secondary btn-remove-photo" aria-label="Hapus foto terpilih">
                       Hapus Foto
                     </button>
                   </div>
                 </div>
               </div>
 
-              <span class="form-error" id="photo-error"></span>
-            </div>
+              <span class="form-error" id="photo-error" role="alert"></span>
+            </fieldset>
 
             <!-- Description Section -->
-            <div class="form-section">
-              <div class="section-label-group">
-                <label for="description" class="form-section-title">Deskripsi Cerita <span class="required-mark">*</span></label>
+            <fieldset class="form-section">
+              <legend class="section-label-group">
+                <label for="description" class="form-section-title">Deskripsi Cerita <span class="required-mark" aria-hidden="true">*</span></label>
                 <span class="section-hint">Tuliskan cerita atau pengalaman Anda</span>
-              </div>
+              </legend>
               <div class="textarea-wrapper">
                 <textarea
                   id="description"
@@ -123,44 +142,46 @@ export default class AddStoryView {
                   class="form-input form-textarea"
                   placeholder="Ceritakan apa yang terjadi, apa yang Anda temukan, atau inspirasi di balik foto ini..."
                   required
+                  aria-required="true"
+                  aria-describedby="char-counter description-error"
                 ></textarea>
                 <div class="textarea-footer">
-                  <span class="form-error" id="description-error"></span>
-                  <span class="char-counter" id="char-counter">0 karakter</span>
+                  <span class="form-error" id="description-error" role="alert"></span>
+                  <span class="char-counter" id="char-counter" aria-live="polite">0 karakter</span>
                 </div>
               </div>
-            </div>
+            </fieldset>
 
             <!-- Digital Map Location Section -->
-            <div class="form-section">
-              <div class="section-label-group">
-                <label class="form-section-title">Lokasi Cerita di Peta Digital (Opsional)</label>
+            <fieldset class="form-section">
+              <legend class="section-label-group">
+                <span class="form-section-title">Lokasi Cerita di Peta Digital (Opsional)</span>
                 <span class="section-hint">Klik pada peta untuk menyematkan koordinat latitude dan longitude cerita Anda</span>
-              </div>
+              </legend>
 
               <div class="map-toolbar">
                 <div class="map-toolbar-actions">
-                  <button type="button" id="btn-current-location" class="btn-secondary btn-sm">
+                  <button type="button" id="btn-current-location" class="btn-secondary btn-sm" aria-label="Gunakan Lokasi GPS Saya">
                     Gunakan Lokasi Saya (GPS)
                   </button>
-                  <button type="button" id="btn-clear-location" class="btn-secondary btn-sm" style="display: none;">
+                  <button type="button" id="btn-clear-location" class="btn-secondary btn-sm" style="display: none;" aria-label="Hapus pin lokasi terpilih">
                     Hapus Pin Lokasi
                   </button>
                 </div>
-                <div class="location-status" id="location-status">
-                  <span class="status-indicator-dot"></span>
+                <div class="location-status" id="location-status" role="status" aria-live="polite">
+                  <span class="status-indicator-dot" aria-hidden="true"></span>
                   <span id="location-status-text">Belum ada lokasi dipilih (Klik peta)</span>
                 </div>
               </div>
 
               <div class="map-picker-card">
                 <div id="add-story-map" class="add-story-map" role="region" aria-label="Peta Pemilih Lokasi Cerita"></div>
-                <div class="map-picker-hint">
+                <div class="map-picker-hint" role="note">
                   <strong>Petunjuk:</strong> Klik di mana saja pada peta atau geser pin marker untuk mengubah posisi koordinat.
                 </div>
               </div>
 
-              <!-- Lat/Lon Coordinate Inputs -->
+              <!-- Lat/Lon Coordinate Inputs with Explicit Labels -->
               <div class="coordinates-grid">
                 <div class="form-group">
                   <label for="latitude" class="form-label">Latitude</label>
@@ -171,6 +192,7 @@ export default class AddStoryView {
                     name="lat"
                     class="form-input coordinate-input"
                     placeholder="Contoh: -6.2088"
+                    aria-label="Koordinat Latitude"
                   />
                 </div>
                 <div class="form-group">
@@ -182,18 +204,19 @@ export default class AddStoryView {
                     name="lon"
                     class="form-input coordinate-input"
                     placeholder="Contoh: 106.8456"
+                    aria-label="Koordinat Longitude"
                   />
                 </div>
               </div>
-              <span class="form-error" id="location-error"></span>
-            </div>
+              <span class="form-error" id="location-error" role="alert"></span>
+            </fieldset>
 
             <!-- Action Buttons -->
             <div class="form-actions">
-              <a href="#/" class="btn-secondary btn-cancel">Batal</a>
-              <button type="submit" id="submit-btn" class="btn-primary btn-submit">
+              <a href="#/" class="btn-secondary btn-cancel" aria-label="Batal dan kembali ke Beranda">Batal</a>
+              <button type="submit" id="submit-btn" class="btn-primary btn-submit" aria-label="Terbitkan Cerita Baru">
                 <span class="btn-text">Terbitkan Cerita</span>
-                <span class="btn-spinner" style="display: none;"></span>
+                <span class="btn-spinner" style="display: none;" aria-hidden="true"></span>
               </button>
             </div>
           </form>
@@ -643,35 +666,51 @@ export default class AddStoryView {
     onClearLocationClick,
     onSubmit,
   }) {
-    // Tabs
+    // Tabs & Keyboard Navigation
     const tabUpload = document.querySelector('#tab-upload');
     const tabCamera = document.querySelector('#tab-camera');
     const contentUpload = document.querySelector('#tab-content-upload');
     const contentCamera = document.querySelector('#tab-content-camera');
 
-    if (tabUpload && tabCamera) {
-      tabUpload.addEventListener('click', () => {
-        tabUpload.classList.add('active');
-        tabCamera.classList.remove('active');
-        tabUpload.setAttribute('aria-selected', 'true');
-        tabCamera.setAttribute('aria-selected', 'false');
+    const selectTab = (tab) => {
+      if (tab === 'upload') {
+        tabUpload?.classList.add('active');
+        tabCamera?.classList.remove('active');
+        tabUpload?.setAttribute('aria-selected', 'true');
+        tabCamera?.setAttribute('aria-selected', 'false');
         if (contentUpload) contentUpload.style.display = 'block';
         if (contentCamera) contentCamera.style.display = 'none';
+        tabUpload?.focus();
         if (onTabChange) onTabChange('upload');
-      });
-
-      tabCamera.addEventListener('click', () => {
-        tabCamera.classList.add('active');
-        tabUpload.classList.remove('active');
-        tabCamera.setAttribute('aria-selected', 'true');
-        tabUpload.setAttribute('aria-selected', 'false');
+      } else {
+        tabCamera?.classList.add('active');
+        tabUpload?.classList.remove('active');
+        tabCamera?.setAttribute('aria-selected', 'true');
+        tabUpload?.setAttribute('aria-selected', 'false');
         if (contentCamera) contentCamera.style.display = 'block';
         if (contentUpload) contentUpload.style.display = 'none';
+        tabCamera?.focus();
         if (onTabChange) onTabChange('camera');
+      }
+    };
+
+    if (tabUpload && tabCamera) {
+      tabUpload.addEventListener('click', () => selectTab('upload'));
+      tabCamera.addEventListener('click', () => selectTab('camera'));
+
+      // Keyboard arrow key navigation between tabs
+      [tabUpload, tabCamera].forEach((tabBtn) => {
+        tabBtn.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const targetTab = tabBtn === tabUpload ? 'camera' : 'upload';
+            selectTab(targetTab);
+          }
+        });
       });
     }
 
-    // Drag & Drop
+    // Drag & Drop + Keyboard Activation
     const dropZone = document.querySelector('#drop-zone');
     const photoInput = this.getPhotoInputElement();
 
@@ -696,6 +735,14 @@ export default class AddStoryView {
         const files = e.dataTransfer?.files;
         if (files && files.length > 0) {
           if (onFileSelected) onFileSelected(files[0]);
+        }
+      });
+
+      // Keyboard operability for drop zone (Enter / Space opens file picker)
+      dropZone.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          photoInput.click();
         }
       });
 

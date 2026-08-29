@@ -1,25 +1,27 @@
 /* Hero Section */
 .hero-section {
-  padding-block: 24px 40px;
+  padding-block: 20px 36px;
 }
 
 .hero-content {
   text-align: center;
-  max-width: 680px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
 .hero-title {
-  font-size: 2.25rem;
+  font-size: clamp(1.75rem, 4vw + 1rem, 2.5rem);
   font-weight: 800;
   letter-spacing: -0.8px;
   color: var(--text-main);
   margin-bottom: 12px;
+  line-height: 1.25;
 }
 
 .hero-description {
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 1.5vw + 0.5rem, 1.1rem);
   color: var(--text-muted);
+  line-height: 1.6;
 }
 
 /* Filter Toolbar & Search */
@@ -27,7 +29,7 @@
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 18px 20px;
+  padding: 16px 18px;
   margin-bottom: 24px;
   box-shadow: var(--shadow-sm);
 }
@@ -38,7 +40,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .stories-counter {
@@ -60,10 +62,11 @@
 
 .search-input {
   width: 100%;
-  padding: 12px 16px;
+  min-height: 48px;
+  padding: 12px 18px;
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-sm);
-  font-size: 0.925rem;
+  font-size: 0.95rem;
   font-family: inherit;
   color: var(--text-main);
   background-color: #ffffff;
@@ -73,7 +76,7 @@
 .search-input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px var(--primary-focus);
 }
 
 /* Auth Banner */
@@ -94,10 +97,6 @@
   display: flex;
   align-items: center;
   gap: 14px;
-}
-
-.auth-banner-icon {
-  font-size: 2rem;
 }
 
 .auth-banner h3 {
@@ -122,7 +121,7 @@
 }
 
 .section-title {
-  font-size: 1.4rem;
+  font-size: clamp(1.25rem, 2vw + 0.8rem, 1.5rem);
   font-weight: 700;
   color: var(--text-main);
 }
@@ -130,7 +129,7 @@
 .stories-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 20px;
 }
 
 .story-card {
@@ -141,7 +140,7 @@
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  transition: all 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   position: relative;
   cursor: pointer;
 }
@@ -154,23 +153,24 @@
 
 .story-card:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 0 0 3px var(--primary);
 }
 
 /* Active Synced Story Card */
 .story-card.active-story-card {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), var(--shadow-lg);
+  box-shadow: 0 0 0 3px var(--primary-focus), var(--shadow-lg);
   transform: translateY(-4px);
   background-color: #ffffff;
 }
 
 .story-image-container {
   width: 100%;
-  height: 220px;
+  height: 200px;
   background-color: #f1f5f9;
   overflow: hidden;
   position: relative;
+  margin: 0;
 }
 
 .story-image {
@@ -178,6 +178,7 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
+  display: block;
 }
 
 .story-card:hover .story-image {
@@ -185,7 +186,7 @@
 }
 
 .story-body {
-  padding: 20px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -209,7 +210,7 @@
 }
 
 .story-description {
-  font-size: 0.95rem;
+  font-size: 0.925rem;
   color: #475569;
   line-height: 1.55;
   display: -webkit-box;
@@ -233,28 +234,30 @@
 .story-coords-text {
   font-size: 0.8rem;
   color: var(--primary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .story-coords-text.muted-text {
   color: var(--text-muted);
   font-size: 0.775rem;
+  font-weight: 400;
 }
 
 .btn-locate-map {
-  padding: 6px 12px;
+  min-height: 40px;
+  padding: 8px 14px;
   background-color: var(--primary-light);
   color: var(--primary);
-  border: 1px solid rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba(37, 99, 235, 0.25);
   border-radius: var(--radius-sm);
-  font-size: 0.8rem;
+  font-size: 0.825rem;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-normal);
   font-family: inherit;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .btn-locate-map:hover {
@@ -262,14 +265,25 @@
   color: #ffffff;
 }
 
+/* Tablet: 768px */
 @media screen and (min-width: 640px) {
   .stories-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .story-image-container {
+    height: 220px;
   }
 }
 
+/* Desktop: 1024px */
 @media screen and (min-width: 1024px) {
   .stories-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .filter-toolbar {
+    padding: 18px 24px;
   }
 }

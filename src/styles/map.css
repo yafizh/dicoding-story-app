@@ -15,7 +15,7 @@
 
 .section-subtitle {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 0.925rem;
   margin-top: 4px;
 }
 
@@ -27,7 +27,7 @@
   color: var(--primary);
   padding: 6px 14px;
   border-radius: 9999px;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
   border: 1px solid rgba(37, 99, 235, 0.15);
 }
@@ -68,7 +68,7 @@
 
 .story-map {
   width: 100%;
-  height: 440px;
+  height: 320px;
   background-color: #e2e8f0;
   z-index: 1;
 }
@@ -77,11 +77,11 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
-  padding: 12px 20px;
+  gap: 12px 16px;
+  padding: 12px 16px;
   background-color: #f8fafc;
   border-top: 1px solid var(--border-color);
-  font-size: 0.85rem;
+  font-size: 0.825rem;
   color: var(--text-muted);
 }
 
@@ -93,7 +93,7 @@
 }
 
 .legend-tip {
-  margin-left: auto;
+  width: 100%;
   color: #64748b;
 }
 
@@ -102,6 +102,7 @@
   height: 12px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .legend-dot.default-dot {
@@ -195,12 +196,14 @@
   height: 130px;
   background-color: #f1f5f9;
   overflow: hidden;
+  margin: 0;
 }
 
 .map-popup-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .map-popup-info {
@@ -227,27 +230,8 @@
   font-size: 0.825rem;
   color: #475569;
   margin-top: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   line-height: 1.4;
-}
-
-.btn-popup-focus {
-  padding: 6px 12px;
-  background-color: var(--primary);
-  color: #ffffff;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color var(--transition-normal);
-  font-family: inherit;
-  width: 100%;
-  text-align: center;
-}
-
-.btn-popup-focus:hover {
-  background-color: var(--primary-hover);
 }
 
 /* Leaflet Layer Control Custom Styling */
@@ -269,4 +253,28 @@
   margin-bottom: 6px;
   cursor: pointer;
   font-weight: 500;
+  min-height: 28px;
 }
+
+/* Responsive Map Breakpoints */
+@media screen and (min-width: 768px) {
+  .story-map {
+    height: 380px;
+  }
+
+  .legend-tip {
+    width: auto;
+    margin-left: auto;
+  }
+
+  .map-legend {
+    padding: 12px 20px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .story-map {
+    height: 440px;
+  }
+}
+
