@@ -1,12 +1,12 @@
 {
-  "id": "/",
+  "id": "%BASE%",
   "name": "Story App - Berbagi Cerita & Lokasi",
   "short_name": "Story App",
   "description": "Bagikan cerita inspiratif lengkap dengan foto dan lokasi, lalu jelajahi kisah pengguna lain melalui peta interaktif.",
   "lang": "id",
   "dir": "ltr",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "%BASE%",
+  "scope": "%BASE%",
   "display": "standalone",
   "display_override": [
     "standalone",
@@ -24,25 +24,25 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "%BASE%icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "%BASE%icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/maskable-icon-192.png",
+      "src": "%BASE%icons/maskable-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/maskable-icon-512.png",
+      "src": "%BASE%icons/maskable-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -50,28 +50,28 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/desktop-home.png",
+      "src": "%BASE%screenshots/desktop-home.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Beranda Story App dengan peta interaktif lokasi cerita"
     },
     {
-      "src": "/screenshots/desktop-add-story.png",
+      "src": "%BASE%screenshots/desktop-add-story.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Formulir tambah cerita dengan unggah foto dan kamera langsung"
     },
     {
-      "src": "/screenshots/mobile-home.png",
+      "src": "%BASE%screenshots/mobile-home.png",
       "sizes": "540x960",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Tampilan beranda Story App pada perangkat mobile"
     },
     {
-      "src": "/screenshots/mobile-add-story.png",
+      "src": "%BASE%screenshots/mobile-add-story.png",
       "sizes": "540x960",
       "type": "image/png",
       "form_factor": "narrow",
@@ -83,10 +83,10 @@
       "name": "Tambah Cerita Baru",
       "short_name": "Tambah Cerita",
       "description": "Buka formulir untuk membagikan cerita baru",
-      "url": "/#/add-story",
+      "url": "%BASE%#/add-story",
       "icons": [
         {
-          "src": "/icons/icon-192.png",
+          "src": "%BASE%icons/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -96,10 +96,10 @@
       "name": "Beranda",
       "short_name": "Beranda",
       "description": "Lihat daftar cerita dan peta lokasi",
-      "url": "/#/",
+      "url": "%BASE%#/",
       "icons": [
         {
-          "src": "/icons/icon-192.png",
+          "src": "%BASE%icons/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }

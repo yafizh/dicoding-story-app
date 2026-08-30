@@ -8,7 +8,7 @@ export async function registerServiceWorker() {
 
   try {
     const registration = await navigator.serviceWorker.register(CONFIG.SERVICE_WORKER_PATH, {
-      scope: '/',
+      scope: CONFIG.BASE_PATH,
     });
     console.log('Service worker berhasil didaftarkan.', registration.scope);
     return registration;

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `story-app-shell-${CACHE_VERSION}`;
 const ASSET_CACHE = `story-app-assets-${CACHE_VERSION}`;
 const API_CACHE = `story-app-api-${CACHE_VERSION}`;
@@ -13,17 +13,23 @@ const BUILD_ASSETS = Array.isArray(self.__BUILD_ASSETS__) ? self.__BUILD_ASSETS_
 
 const IS_PRODUCTION_BUILD = self.__BUILD_MODE__ === 'production';
 
+const BASE_PATH = self.__BASE_PATH__ || new URL('./', self.location.href).pathname;
+
+const withBase = (path = '') => `${BASE_PATH}${String(path).replace(/^\/+/, '')}`;
+
+const SHELL_DOCUMENT = withBase('index.html');
+
 const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/favicon.png',
-  '/images/logo.png',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/maskable-icon-192.png',
-  '/icons/maskable-icon-512.png',
-  '/icons/apple-touch-icon.png',
+  BASE_PATH,
+  SHELL_DOCUMENT,
+  withBase('manifest.webmanifest'),
+  withBase('favicon.png'),
+  withBase('images/logo.png'),
+  withBase('icons/icon-192.png'),
+  withBase('icons/icon-512.png'),
+  withBase('icons/maskable-icon-192.png'),
+  withBase('icons/maskable-icon-512.png'),
+  withBase('icons/apple-touch-icon.png'),
   ...BUILD_ASSETS,
 ];
 
@@ -39,8 +45,8 @@ const MAP_TILE_HOSTS = [
 const MAX_IMAGE_ENTRIES = 90;
 const MAX_API_ENTRIES = 60;
 
-const DEFAULT_ICON = '/icons/icon-192.png';
-const DEFAULT_BADGE = '/favicon.png';
+const DEFAULT_ICON = withBase('icons/icon-192.png');
+const DEFAULT_BADGE = withBase('favicon.png');
 const DEFAULT_TITLE = 'Story App';
 const DEFAULT_BODY = 'Ada pembaruan cerita terbaru untuk Anda.';
 
@@ -241,7 +247,7 @@ function buildOfflineFallbackPage() {
 <body><div class="card">
   <h1>Anda sedang offline</h1>
   <p>Story App belum sempat menyimpan halaman ini. Sambungkan kembali ke internet lalu muat ulang halaman.</p>
-  <a href="/">Coba Lagi</a>
+  <a href="${BASE_PATH}">Coba Lagi</a>
 </div></body></html>`,
     { headers: { 'Content-Type': 'text/html; charset=utf-8' }, status: 200 }
   );
@@ -252,19 +258,19 @@ async function handleNavigationRequest(event) {
     const preloaded = await event.preloadResponse;
     if (preloaded) {
       const cache = await caches.open(SHELL_CACHE);
-      cache.put('/index.html', preloaded.clone()).catch(() => {});
+      cache.put(SHELL_DOCUMENT, preloaded.clone()).catch(() => {});
       return preloaded;
     }
 
     const response = await fetch(event.request);
     if (response && response.ok) {
       const cache = await caches.open(SHELL_CACHE);
-      cache.put('/index.html', response.clone()).catch(() => {});
+      cache.put(SHELL_DOCUMENT, response.clone()).catch(() => {});
     }
     return response;
   } catch (error) {
     const cache = await caches.open(SHELL_CACHE);
-    const cachedShell = (await cache.match('/index.html')) || (await cache.match('/'));
+    const cachedShell = (await cache.match(SHELL_DOCUMENT)) || (await cache.match(BASE_PATH));
     return cachedShell || buildOfflineFallbackPage();
   }
 }
@@ -408,7 +414,7 @@ async function buildNotification(rawPayload) {
   const icon = payloadOptions.icon || payload.icon || context.photoUrl || DEFAULT_ICON;
   const image = payloadOptions.image || payload.image || context.photoUrl || undefined;
 
-  const detailUrl = storyId ? `/#/stories/${storyId}` : '/#/';
+  const detailUrl = storyId ? withBase(`#/stories/${storyId}`) : withBase('#/');
 
   const actions = [
     { action: 'open-detail', title: storyId ? 'Lihat Detail Cerita' : 'Buka Story App' },
@@ -461,7 +467,7 @@ self.addEventListener('notificationclick', (event) => {
     return;
   }
 
-  const targetUrl = new URL(data.url || '/#/', self.location.origin).href;
+  const targetUrl = new URL(data.url || withBase('#/'), self.location.origin).href;
 
   event.waitUntil(
     (async () => {
