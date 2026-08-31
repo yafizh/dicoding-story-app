@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const SHELL_CACHE = `story-app-shell-${CACHE_VERSION}`;
 const ASSET_CACHE = `story-app-assets-${CACHE_VERSION}`;
 const API_CACHE = `story-app-api-${CACHE_VERSION}`;

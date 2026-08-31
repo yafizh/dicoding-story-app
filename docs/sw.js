@@ -4,10 +4,10 @@ self.__BASE_PATH__ = "/dicoding-story-app/";
 self.__API_BASE_URL__ = "https://story-api.dicoding.dev/v1";
 self.__BUILD_ASSETS__ = [
   "/dicoding-story-app/assets/index-Cf3TkoQ_.css",
-  "/dicoding-story-app/assets/index-CxjD2Ggk.js"
+  "/dicoding-story-app/assets/index-BbsrIQVb.js"
 ];
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const SHELL_CACHE = `story-app-shell-${CACHE_VERSION}`;
 const ASSET_CACHE = `story-app-assets-${CACHE_VERSION}`;
 const API_CACHE = `story-app-api-${CACHE_VERSION}`;
