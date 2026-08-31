@@ -10,7 +10,7 @@ export default class StoryDetailView {
       <section class="container story-detail-section" aria-labelledby="story-detail-title">
         <a href="#/" class="back-link" aria-label="Kembali ke Beranda">Kembali ke Beranda</a>
 
-        <h1 id="story-detail-title" class="visually-hidden">Detail Cerita</h1>
+        <h1 id="story-detail-title">Detail Cerita</h1>
 
         <div id="detail-loading" class="loading-container" role="status" aria-live="polite">
           <div class="spinner" aria-hidden="true"></div>
@@ -139,12 +139,34 @@ export default class StoryDetailView {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
 
-    this.#marker = L.marker([story.lat, story.lon], { title: story.name }).addTo(this.#map);
+    this.#marker = L.marker([story.lat, story.lon], {
+      title: story.name,
+      icon: this.#createMarkerIcon(),
+    }).addTo(this.#map);
     this.#marker.bindPopup(`<strong>${story.name}</strong>`);
 
     setTimeout(() => {
       if (this.#map) this.#map.invalidateSize();
     }, 250);
+  }
+
+  #createMarkerIcon() {
+    return L.divIcon({
+      className: 'custom-map-marker',
+      html: `
+        <div class="marker-wrapper">
+          <div class="marker-pin default-pin">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+              <circle cx="12" cy="9" r="2.5" fill="#ffffff"/>
+            </svg>
+          </div>
+        </div>
+      `,
+      iconSize: [32, 40],
+      iconAnchor: [16, 36],
+      popupAnchor: [0, -34],
+    });
   }
 
   bindSaveClick(handler) {
